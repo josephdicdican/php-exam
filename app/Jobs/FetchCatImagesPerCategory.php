@@ -56,11 +56,11 @@ class FetchCatImagesPerCategory implements ShouldQueue
             Log::info(sprintf("%s - %d", $category_cache_count, $images_count));
 
             if(!Cache::has($category_cache_count)) {
-                Cache::set($category_cache_count, $images_count);    
+                Cache::put($category_cache_count, $images_count, 60);    
             } 
             
             if(!Cache::has('total_images_fetched')) {
-                Cache::set('total_images_fetched', 0);
+                Cache::put('total_images_fetched', 0, 60);
             }
 
             Cache::increment($category_cache_count, $images_count);

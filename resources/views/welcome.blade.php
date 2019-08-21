@@ -108,15 +108,19 @@
 
                     var paginate = $('#paginate');
                     paginate.html('');
-                    paginate.append('<a '+(response.prev_page_url == null ? 'disabled' : '')+' href="'+response.prev_page_url+'" data-category-id="'+category_id+'" class="btn btn-xs">Prev</i>');
-                    paginate.append('<a '+(response.next_page_url == null ? 'disabled' : '')+' href="'+response.next_page_url+'" data-category-id="'+category_id+'" class="btn btn-xs">Next</i>');
+                    paginate.append('<a '+(response.prev_page_url == null ? 'disabled' : '')+' data-href="'+(response.prev_page_url == null ? '' : response.prev_page_url)+'" data-category-id="'+category_id+'" class="btn btn-xs">Prev</i>');
+                    paginate.append('<a '+(response.next_page_url == null ? 'disabled' : '')+' data-href="'+(response.next_page_url == null ? '' : response.next_page_url)+'" data-category-id="'+category_id+'" class="btn btn-xs">Next</i>');
                 });
             };
 
             $('#paginate').on('click', 'a', function(e) {
                 e.preventDefault();
                 var category_id = $(this).data('category-id');
-                fetch_cat_images(category_id, $(this).attr('href')+'&category_id='+category_id);
+                if($(this).data('href')) {
+                    fetch_cat_images(category_id, $(this).data('href')+'&category_id='+category_id);
+                } else {
+                    alert('no images no fetch');
+                }
             });
 
             fetch_cat_images();

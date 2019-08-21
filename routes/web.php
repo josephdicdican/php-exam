@@ -11,9 +11,20 @@
 |
 */
 
+use Illuminate\Support\Facades\Cache;
+
 use App\CatImagePerCategory;
 
 Route::get('/', function () {
 
 	return view('welcome'); 
+});
+
+Route::get('test', function() {
+	dd(
+		Cache::get('hats_count'),
+		Cache::get('space_count'),
+		Cache::get('funny_count'),
+		Cache::get('total_images_fetched')
+	);
 });

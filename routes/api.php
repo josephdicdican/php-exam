@@ -13,6 +13,12 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'cat'], function() {
+	Route::group(['prefix' => 'images'], function() {
+		Route::get('', 'CatImagesController@index');
+		Route::post('dispatch-fetch', 'CatImagesController@dispatchFetchCatImagesCategory');
+	});
+
+	Route::get('categories', 'CatImagesController@getCatCategories');
 });
+

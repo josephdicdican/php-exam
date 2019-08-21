@@ -63,33 +63,64 @@
                 margin-bottom: 30px;
             }
         </style>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     </head>
     <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-                        <a href="{{ route('register') }}">Register</a>
-                    @endauth
-                </div>
-            @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
+        <div class="container">
+            <h3>Cats</h3>
+            <div class="row">
+                &emsp;<select id="cat-categories"></select><br>
+                <p id="paginate"></p>
             </div>
+            <div class="row">
+                <div id="cat-images" class="col-md-12"></div>
+            </div>
+
         </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            var base = 'http://127.0.0.1:8000/api';
+            var category_select = $('#cat-categories');
+
+            $.get(base+'/cat/categories', function(data) {
+                $.each(data, function(key, row) {
+                    category_select.append('<option value="'+row.id+'">'+row.name+'</option>');
+                });
+            });
+
+            $('body').on('click', '#cat-categories', function() {
+                fetch_cat_images($(this).val());
+            });
+
+            var fetch_cat_images = function(category_id = '', url = '') {
+                var cat_image_div = $('#cat-images');
+                cat_image_div.html('');
+
+                if(url == '') {
+                    url = base+'/cat/images?category_id='+category_id;
+                }
+
+                $.get(url, function(response) {
+                    $.each(response.data, function(key, row) {
+                        cat_image_div.append('<p><a href="'+row.source_url+'"><img src="'+row.url+'"></a></p>');
+                    });
+
+                    var paginate = $('#paginate');
+                    paginate.html('');
+                    paginate.append('<a '+(response.prev_page_url == null ? 'disabled' : '')+' href="'+response.prev_page_url+'" data-category-id="'+category_id+'" class="btn btn-xs">Prev</i>');
+                    paginate.append('<a '+(response.next_page_url == null ? 'disabled' : '')+' href="'+response.next_page_url+'" data-category-id="'+category_id+'" class="btn btn-xs">Next</i>');
+                });
+            };
+
+            $('#paginate').on('click', 'a', function(e) {
+                e.preventDefault();
+                var category_id = $(this).data('category-id');
+                fetch_cat_images(category_id, $(this).attr('href')+'&category_id='+category_id);
+            });
+
+            fetch_cat_images();
+
+        </script>
     </body>
 </html>
